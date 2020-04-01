@@ -24,6 +24,7 @@ var _ = Describe("Uninstall", func() {
 		mockHelmClient         *mocks.MockHelmClient
 		mockHelmUninstallation *mocks.MockHelmUninstallation
 		mockReleaseListRunner  *mocks.MockHelmReleaseListRunner
+		crdDeleteCmd           string
 		crdName                = "authconfigs.enterprise.gloo.solo.io"
 
 		testCRD = `
@@ -55,6 +56,8 @@ spec:
 		mockHelmClient = mocks.NewMockHelmClient(ctrl)
 		mockHelmUninstallation = mocks.NewMockHelmUninstallation(ctrl)
 		mockReleaseListRunner = mocks.NewMockHelmReleaseListRunner(ctrl)
+
+		crdDeleteCmd = fmt.Sprintf("delete crd %s", strings.Join(install.GlooCrdNames, " "))
 	})
 
 	AfterEach(func() {
@@ -66,7 +69,7 @@ spec:
 		BeforeEach(func() {
 			mockHelmClient.EXPECT().NewUninstall(defaults.GlooSystem).Return(mockHelmUninstallation, nil)
 			mockHelmClient.EXPECT().ReleaseExists(defaults.GlooSystem, constants.GlooReleaseName).Return(true, nil)
-			mockHelmClient.EXPECT().ReleaseList(defaults.GlooSystem).Return(mockReleaseListRunner, nil).Times(1)
+			mockHelmClient.EXPECT().ReleaseList(defaults.GlooSystem).Return(mockReleaseListRunner, nil).MaxTimes(1)
 			mockReleaseListRunner.EXPECT().Run().Return([]*release.Release{{
 				Name: constants.GlooReleaseName,
 				Chart: &chart.Chart{
@@ -75,7 +78,7 @@ spec:
 						Data: []byte(testCRD),
 					}},
 				},
-			}}, nil).Times(1)
+			}}, nil).MaxTimes(1)
 			mockHelmUninstallation.EXPECT().Run(constants.GlooReleaseName).Return(nil, nil)
 		})
 
@@ -89,7 +92,7 @@ spec:
 		})
 
 		It("can uninstall CRDs when requested", func() {
-			mockKubectl := installutil.NewMockKubectl([]string{"delete crd " + crdName}, []string{})
+			mockKubectl := installutil.NewMockKubectl([]string{"delete crd " + crdName, crdDeleteCmd}, []string{})
 
 			uninstaller := install.NewUninstallerWithOutput(mockHelmClient, mockKubectl, new(bytes.Buffer))
 			err := uninstaller.Uninstall(&options.Options{
@@ -123,6 +126,7 @@ spec:
 		It("--all flag behaves as expected", func() {
 			mockKubectl := installutil.NewMockKubectl([]string{
 				"delete crd " + crdName,
+				crdDeleteCmd,
 				"delete namespace " + defaults.GlooSystem,
 			}, []string{})
 
@@ -144,7 +148,6 @@ spec:
 		var (
 			namespacedDeleteCmds,
 			clusterScopedDeleteCmds []string
-			crdDeleteCmd string
 		)
 
 		BeforeEach(func() {
@@ -161,7 +164,6 @@ spec:
 				clusterScopedDeleteCmds = append(clusterScopedDeleteCmds,
 					fmt.Sprintf("delete %s -l %s", kind, glooAppFlags))
 			}
-			crdDeleteCmd = fmt.Sprintf("delete crd %s", strings.Join(install.GlooCrdNames, " "))
 		})
 
 		It("deletes all resources with the app=gloo label in the given namespace", func() {

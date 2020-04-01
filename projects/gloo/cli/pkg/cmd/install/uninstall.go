@@ -122,7 +122,7 @@ func (u *uninstaller) Uninstall(cliArgs *options.Options) error {
 	return nil
 }
 
-// Note: will not find CRDs of dependencies due to helm bug (https://github.com/helm/helm/issues/7847)
+// Note: will not find CRDs of dependencies due to confusing but intended helm behavior (https://github.com/helm/helm/issues/7847)
 func (u *uninstaller) findCrdNamesForRelease(namespace string) (crdNames []string, err error) {
 	lister, err := u.helmClient.ReleaseList(namespace)
 	if err != nil {
