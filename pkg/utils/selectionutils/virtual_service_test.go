@@ -83,9 +83,6 @@ var _ = Describe("SelectorTest", func() {
 				vsClient.EXPECT().
 					Read(ref.GetNamespace(), ref.GetName(), clients.ReadOpts{Ctx: context.Background()}).
 					Return(nil, sk_errors.NewNotExistErr(ref.GetNamespace(), ref.GetName(), testErr))
-				vsClient.EXPECT().
-					Write(expected, clients.WriteOpts{Ctx: context.Background()}).
-					Return(expected, nil)
 
 				actual, err := selector.SelectOrCreateVirtualService(context.Background(), &ref)
 				Expect(err).NotTo(HaveOccurred())
@@ -95,10 +92,6 @@ var _ = Describe("SelectorTest", func() {
 			It("creates a new default vs with the provided name and default namespace", func() {
 				nameRef := &core.ResourceRef{Name: "just-name"}
 				expected := getDefault(podNamespace, nameRef.Name)
-
-				vsClient.EXPECT().
-					Write(expected, clients.WriteOpts{Ctx: context.Background()}).
-					Return(expected, nil)
 
 				actual, err := selector.SelectOrCreateVirtualService(context.Background(), nameRef)
 				Expect(err).NotTo(HaveOccurred())
@@ -148,9 +141,6 @@ var _ = Describe("SelectorTest", func() {
 				vsClient.EXPECT().
 					List(podNamespace, clients.ListOpts{Ctx: context.Background()}).
 					Return(nil, nil)
-				vsClient.EXPECT().
-					Write(expected, clients.WriteOpts{Ctx: context.Background()}).
-					Return(expected, nil)
 
 				actual, err := selector.SelectOrCreateVirtualService(context.Background(), nil)
 				Expect(err).NotTo(HaveOccurred())
@@ -173,19 +163,6 @@ var _ = Describe("SelectorTest", func() {
 					Return([]string{otherNs}, nil)
 				vsClient.EXPECT().
 					List(otherNs, clients.ListOpts{Ctx: context.Background()}).
-					Return(nil, testErr)
-
-				_, err := selector.SelectOrCreateVirtualService(context.Background(), nil)
-				Expect(err).To(HaveOccurred())
-				Expect(err).To(Equal(testErr))
-			})
-
-			It("errors when the client errors on write", func() {
-				nsLister.EXPECT().
-					List().
-					Return([]string{}, nil)
-				vsClient.EXPECT().
-					Write(getDefault(podNamespace, "default"), clients.WriteOpts{Ctx: context.Background()}).
 					Return(nil, testErr)
 
 				_, err := selector.SelectOrCreateVirtualService(context.Background(), nil)

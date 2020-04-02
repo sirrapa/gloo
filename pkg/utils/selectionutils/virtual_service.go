@@ -71,7 +71,7 @@ func (s *virtualServiceSelector) SelectOrCreateVirtualService(ctx context.Contex
 		}
 	}
 
-	// Create a new default virtual service
+	// Create a new default virtual service object
 	return s.create(ctx, ref)
 }
 
@@ -92,10 +92,6 @@ func (s *virtualServiceSelector) create(ctx context.Context, ref *core.ResourceR
 		virtualService.Metadata.Name = "default"
 	}
 
-	written, err := s.client.Write(virtualService, clients.WriteOpts{Ctx: ctx})
-	if err != nil {
-		return nil, err
-	}
-	contextutils.LoggerFrom(ctx).Infow("Created new default virtual service", zap.Any("virtualService", virtualService))
-	return written, nil
+	contextutils.LoggerFrom(ctx).Infow("Created new default virtual service object", zap.Any("virtualService", virtualService))
+	return virtualService, nil
 }

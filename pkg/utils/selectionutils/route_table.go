@@ -52,6 +52,7 @@ func (s *routeTableSelector) SelectOrCreateRouteTable(ctx context.Context, ref *
 		return found, nil
 	}
 
+	// Create a new default route table object
 	return s.create(ctx, ref)
 }
 
@@ -69,10 +70,6 @@ func (s *routeTableSelector) create(ctx context.Context, ref *core.ResourceRef) 
 		routeTable.Metadata.Name = "default"
 	}
 
-	written, err := s.client.Write(routeTable, clients.WriteOpts{Ctx: ctx})
-	if err != nil {
-		return nil, err
-	}
-	contextutils.LoggerFrom(ctx).Infow("Created new default route table", zap.Any("routeTable", routeTable))
-	return written, nil
+	contextutils.LoggerFrom(ctx).Infow("Created new default route table object", zap.Any("routeTable", routeTable))
+	return routeTable, nil
 }
