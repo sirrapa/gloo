@@ -50,7 +50,7 @@ func loadAssignmentForUpstream(upstream *v1.Upstream, clusterEndpoints []*v1.End
 								Protocol: envoycore.SocketAddress_TCP,
 								Address:  addr.Address,
 								PortSpecifier: &envoycore.SocketAddress_PortValue{
-									PortValue: uint32(addr.Port),
+									PortValue: addr.Port,
 								},
 							},
 						},
