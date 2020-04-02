@@ -293,22 +293,22 @@ func getIpAddresses(ctx context.Context, address string, resolver DnsResolver) (
 	return ipAddresses, nil
 }
 
-func buildEndpoint(namespace, hostname, address string, service *consulapi.CatalogService, upstreams []*v1.Upstream) *v1.Endpoint {
-	host := ""
-	if hostname != address {
-		host = hostname
+func buildEndpoint(namespace, address, ipAddress string, service *consulapi.CatalogService, upstreams []*v1.Upstream) *v1.Endpoint {
+	hostname := ""
+	if address != ipAddress {
+		hostname = address
 	}
 	return &v1.Endpoint{
 		Metadata: core.Metadata{
 			Namespace:       namespace,
-			Name:            buildEndpointName(address, service),
+			Name:            buildEndpointName(ipAddress, service),
 			Labels:          buildLabels(service.ServiceTags, []string{service.Datacenter}, upstreams),
 			ResourceVersion: strconv.FormatUint(service.ModifyIndex, 10),
 		},
 		Upstreams: toResourceRefs(upstreams, service.ServiceTags),
-		Address:   address,
+		Address:   ipAddress,
 		Port:      uint32(service.ServicePort),
-		Hostname:  host, // we don't want to override the hostname if we didn't resolve a host to get the ip address
+		Hostname:  hostname, // we don't want to override the hostname if we didn't resolve the address
 	}
 }
 
