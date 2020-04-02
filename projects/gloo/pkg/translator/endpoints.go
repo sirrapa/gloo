@@ -55,6 +55,7 @@ func loadAssignmentForUpstream(upstream *v1.Upstream, clusterEndpoints []*v1.End
 							},
 						},
 					},
+					Hostname: addr.GetHostname(),
 				},
 			},
 		}
