@@ -1,4 +1,4 @@
-relaxServerValidation: true
+relaxSemverValidation: true
 allowedLabels:
   - rc
   - beta
