@@ -1,3 +1,4 @@
+relaxServerValidation: true
 allowedLabels:
   - rc
   - beta
