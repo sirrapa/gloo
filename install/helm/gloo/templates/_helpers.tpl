@@ -26,3 +26,13 @@ Expand the name of a container image
 {{- define "gloo.image" -}}
 {{ .registry }}/{{ .repository }}:{{ .tag }}
 {{- end -}}
+
+{{/* Generate basic labels */}}
+{{- define "gloo.extraLabels" }}
+chart: {{ $.Chart.Name | quote }}
+release: {{ $.Release.Name | quote }}
+heritage: {{ $.Release.Service | quote }}
+{{- if .Values.global.extraLabels}}
+{{ toYaml .Values.global.extraLabels }}
+{{- end }}
+{{- end }}

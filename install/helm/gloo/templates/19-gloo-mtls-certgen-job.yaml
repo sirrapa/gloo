@@ -23,6 +23,15 @@ spec:
         - image: {{template "gloo.image" $image}}
           imagePullPolicy: {{ $image.pullPolicy }}
           name: certgen
+{{- if .Values.gateway.certGenJob.resources }}
+          resources:
+{{ toYaml .Values.gateway.certGenJob.resources | indent 12}}
+{{- else}}
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end}}
           env:
             - name: POD_NAMESPACE
               valueFrom:

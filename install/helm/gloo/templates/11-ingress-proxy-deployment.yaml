@@ -9,6 +9,7 @@ metadata:
   labels:
     app: gloo
     gloo: ingress-proxy
+{{ include "gloo.extraLabels" . | indent 4 }}
   name: ingress-proxy
   namespace: {{ .Release.Namespace }}
 spec:
@@ -20,6 +21,7 @@ spec:
     metadata:
       labels:
         gloo: ingress-proxy
+{{ include "gloo.extraLabels" . | indent 8 }}
 {{- if .Values.ingressProxy.deployment.extraAnnotations }}
       annotations:
       {{- range $key, $value := .Values.ingressProxy.deployment.extraAnnotations }}

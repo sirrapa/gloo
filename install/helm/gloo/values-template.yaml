@@ -42,6 +42,13 @@ gloo:
     validationPort: 9988
     replicas: 1
     runAsUser: 10101
+    # resources:
+    #  limits:
+    #    cpu: 600m
+    #    memory: 512Mi
+    #  requests:
+    #    cpu: 500m
+    #    memory: 256Mi
 discovery:
   enabled: true
   fdsMode: WHITELIST
@@ -70,6 +77,13 @@ gateway:
     restartPolicy: OnFailure
     setTtlAfterFinished: true
     ttlSecondsAfterFinished: 60
+    # resources:
+    #  limits:
+    #    cpu: 200m
+    #    memory: 256Mi
+    #  requests:
+    #    cpu: 100m
+    #    memory: 128Mi
   proxyServiceAccount: {}
 gatewayProxies:
   gatewayProxy:
@@ -84,6 +98,13 @@ gatewayProxies:
       httpPort: 8080
       httpsPort: 8443
       runAsUser: 10101
+      # resources:
+      #  limits:
+      #    cpu: 200m
+      #    memory: 256Mi
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
     service:
       type: LoadBalancer
       # clusterIP: None
@@ -102,12 +123,26 @@ accessLogger:
   image:
     repository: access-logger
   replicas: 1
+  # resources:
+  #  limits:
+  #    cpu: 200m
+  #    memory: 256Mi
+  #  requests:
+  #    cpu: 100m
+  #    memory: 128Mi
 ingress:
   enabled: false
   deployment:
     image:
       repository: ingress
     replicas: 1
+    # resources:
+    #  limits:
+    #    cpu: 200m
+    #    memory: 256Mi
+    #  requests:
+    #    cpu: 100m
+    #    memory: 128Mi
 ingressProxy:
   deployment:
     image:
@@ -122,6 +157,10 @@ global:
   image:
     registry: quay.io/solo-io
     pullPolicy: IfNotPresent
+  # Add extra labels to deployment and Job resources
+  # extraLabels:
+  #   tier: level0
+  extraLabels: {}
   glooRbac:
     create: true
   glooStats:
@@ -131,6 +170,21 @@ global:
     sds:
       image:
         repository: sds
+      # resources:
+      #  limits:
+      #    cpu: 100m
+      #    memory: 128Mi
+      #  requests:
+      #    cpu: 50m
+      #    memory: 64Mi
     envoy:
       image:
         repository: gloo-envoy-wrapper
+      # resources:
+      #  limits:
+      #    cpu: 200m
+      #    memory: 256Mi
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
+        

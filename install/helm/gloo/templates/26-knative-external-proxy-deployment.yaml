@@ -10,6 +10,7 @@ metadata:
   labels:
     app: gloo
     gloo: knative-external-proxy
+{{ include "gloo.extraLabels" . | indent 4 }}
   name: knative-external-proxy
   namespace: {{ .Release.Namespace }}
 spec:
@@ -21,6 +22,7 @@ spec:
     metadata:
       labels:
         gloo: knative-external-proxy
+{{ include "gloo.extraLabels" . | indent 8 }}
     spec:
       containers:
       - args: ["--disable-hot-restart"]
