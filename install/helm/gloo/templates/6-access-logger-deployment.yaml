@@ -31,6 +31,15 @@ spec:
         - image: {{ template "gloo.image" $image }}
           imagePullPolicy: {{ $image.pullPolicy }}
           name: access-logger
+{{- if .Values.accessLogger.resources }}
+          resources:
+{{ toYaml .Values.accessLogger.resources | indent 12}}
+{{- else}}
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end}}
           env:
           - name: POD_NAMESPACE
             valueFrom:

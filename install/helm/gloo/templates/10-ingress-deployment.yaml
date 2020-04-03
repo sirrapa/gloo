@@ -27,6 +27,15 @@ spec:
       - image: {{template "gloo.image" $image}}
         imagePullPolicy: {{ $image.pullPolicy }}
         name: ingress
+{{- if .Values.ingress.deployment.resources }}
+        resources:
+{{ toYaml .Values.ingress.deployment.resources | indent 10}}
+{{- else}}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+{{- end}}
         env:
 {{- if .Values.ingress.deployment.customEnv }}
 {{ toYaml .Values.ingress.deployment.customEnv | indent 8 }}

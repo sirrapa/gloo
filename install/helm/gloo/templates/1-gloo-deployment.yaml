@@ -50,12 +50,18 @@ spec:
 {{- if .Values.global.glooMtls.enabled }}
       {{- $sdsImage := merge .Values.global.glooMtls.sds.image .Values.global.image }}
       {{- $envoyImage := merge .Values.global.glooMtls.envoy.image .Values.global.image}}
-      - env:
-        - name: ENVOY_SIDECAR
-          value: "true"
-        name: envoy-sidecar
+      - name: envoy-sidecar
         image: {{ template "gloo.image" $envoyImage }}
         imagePullPolicy: {{ $envoyImage.pullPolicy }}
+{{- if .Values.global.glooMtls.envoy.resources }}
+        resources:
+{{ toYaml .Values.global.glooMtls.envoy.resources | indent 10}}
+{{- else}}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+{{- end}}
         ports:
         - containerPort: {{ .Values.gloo.deployment.xdsPort }}
           name: grpc-xds
@@ -72,9 +78,21 @@ spec:
         - mountPath: /etc/envoy/ssl
           name: gloo-mtls-certs
           readOnly: true
+          env:
+            - name: ENVOY_SIDECAR
+              value: "true"
       - name: sds
         image: {{ template "gloo.image" $sdsImage }}
         imagePullPolicy: {{ $sdsImage.pullPolicy }}
+{{- if .Values.global.glooMtls.sds.resources }}
+        resources:
+{{ toYaml .Values.global.glooMtls.sds.resources | indent 10}}
+{{- else}}
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+{{- end}}
         volumeMounts:
         - mountPath: /etc/envoy/ssl
           name: gloo-mtls-certs
