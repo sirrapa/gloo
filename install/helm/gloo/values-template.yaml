@@ -122,6 +122,10 @@ global:
   image:
     registry: quay.io/solo-io
     pullPolicy: IfNotPresent
+  # Add extra labels to deployment and Job resources
+  # extraLabels:
+  #   tier: level0
+  extraLabels: {}
   glooRbac:
     create: true
   glooStats:

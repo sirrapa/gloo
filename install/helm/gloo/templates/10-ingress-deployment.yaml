@@ -9,6 +9,7 @@ metadata:
   labels:
     app: gloo
     gloo: ingress
+{{ include "gloo.extraLabels" . | indent 4 }}
   name: ingress
   namespace: {{ .Release.Namespace }}
 spec:
@@ -20,6 +21,7 @@ spec:
     metadata:
       labels:
         gloo: ingress
+{{ include "gloo.extraLabels" . | indent 8 }}
     spec:
       containers:
       - image: {{template "gloo.image" $image}}

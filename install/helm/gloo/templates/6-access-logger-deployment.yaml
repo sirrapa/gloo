@@ -10,6 +10,7 @@ metadata:
   labels:
     app: gloo
     gloo: gateway-proxy-access-logger
+{{ include "gloo.extraLabels" . | indent 4 }}
   name: gateway-proxy-access-logger
   namespace: {{ $.Release.Namespace }}
 spec:
@@ -23,6 +24,7 @@ spec:
       labels:
         app: gloo
         gloo: gateway-proxy-access-logger
+{{ include "gloo.extraLabels" . | indent 8 }}
     spec:
       serviceAccountName: gateway-proxy
       containers:

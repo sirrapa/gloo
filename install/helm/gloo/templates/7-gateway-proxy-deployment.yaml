@@ -22,6 +22,7 @@ metadata:
     app: gloo
     gloo: gateway-proxy
     gateway-proxy-id: {{ $name | kebabcase }}
+{{ include "gloo.extraLabels" . | indent 4 }}
   name: {{ $name | kebabcase }}
   namespace: {{ $.Release.Namespace }}
 spec:
@@ -34,6 +35,7 @@ spec:
     matchLabels:
       gloo: gateway-proxy
       gateway-proxy-id: {{ $name | kebabcase }}
+{{ include "gloo.extraLabels" . | indent 8 }}
   template:
     metadata:
       labels:
